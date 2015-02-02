@@ -1,0 +1,32 @@
+kind: Pod
+id: docker-registry
+apiVersion: v1beta1
+namespace: default
+labels:
+  name: docker-registry
+desiredState:
+  manifest:
+    version: v1beta1
+    id: docker-registry
+    volumes: []
+    containers:
+    - name: master
+      image: registry:latest
+      ports:
+        - containerPort: 5000
+          hostPort: 5000
+          protocol: TCP
+      volumeMounts:
+        - name: registry-data
+          mountPath: /var/lib/docker-registry
+          readOnly: false
+      env:
+        - name: STORAGE
+          value: local
+        - name: STORAGE_PATH
+          value: /var/lib/docker-registry
+    volumes:
+      - name: registry-data
+        source:
+          hostDir:
+            path: /var/lib/docker-registry-storage

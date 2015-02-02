@@ -1,0 +1,14 @@
+kind: Pod
+id: ubuntu
+apiVersion: v1beta1
+namespace: default
+labels:
+  name: ubuntu
+desiredState:
+  manifest:
+    version: v1beta1
+    id: ubuntu
+    volumes: []
+    containers:
+    - name: master
+      image: tutum/ubuntu:latest
