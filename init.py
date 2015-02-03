@@ -49,7 +49,7 @@ while x <= CLUSTER_SIZE:
 	call(["ssh-keygen", "-R", host_pub_ip])
 	# create local registry; build, tag and push drupal image; create pods
 	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/host.sh", "core@" + host_pub_ip + ":~/"])
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash", HOME + "/kubernetes_cluster_automation/host.sh", str(kub_ip), str(x)])
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash host.sh", str(kub_ip), str(x)])
 	# get pod's IP
 	pods_ip_list = list()
 	pods_ip_list.append(call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "PATH=$PATH:/opt/bin kubecfg -h http://" + kub_ip + ":8080 -json=true get pods/drupal" + str(x) + "|PATH=$PATH:/opt/bin jq '.currentState.podIP'|sed 's/\"//g'"]))
