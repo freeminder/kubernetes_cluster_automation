@@ -46,15 +46,17 @@ while x <= CLUSTER_SIZE:
 	# remove old ssh public key fingerprints
 	call(["ssh-keygen", "-R", host_pub_ip])
 	# create local registry
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "mkdir -p ~/bin"])
+	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "~/bin/*", "core@" + host_pub_ip + ":~/bin/"])
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "git clone https://github.com/freeminder/kubernetes_cluster_automation"])
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "kubecfg -c kubernetes_cluster_automation/pods/myregistry.yaml create pods/"])
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "~/bin/kubecfg -c kubernetes_cluster_automation/pods/myregistry.yaml create pods/"])
 	# build, tag and push drupal image
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "git clone https://github.com/freeminder/drupal_allin2"])
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "docker build -t drupal drupal_allin2 && docker tag drupal localhost:5000/drupal && docker push localhost:5000/drupal"])
 	# create pods
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "mv kubernetes_cluster_automation/pods/drupal1.yaml kubernetes_cluster_automation/pods/drupal" + str(x) + ".yaml"])
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "sed -i s/drupal1/drupal" + str(x) + "/ kubernetes_cluster_automation/pods/drupal" + str(x) + ".yaml"])
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "kubecfg -c kubernetes_cluster_automation/pods/drupal" + str(x) + ".yaml create pods/"])
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "~/bin/kubecfg -c kubernetes_cluster_automation/pods/drupal" + str(x) + ".yaml create pods/"])
 	# get pod's IP
 	# code to be written
 	# ...
