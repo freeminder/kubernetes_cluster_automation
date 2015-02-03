@@ -52,7 +52,7 @@ while x <= CLUSTER_SIZE:
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash host.sh", str(kub_ip), str(x)])
 	# get pod's IP
 	pods_ip_list = list()
-	pods_ip_list.append(call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "PATH=$PATH:/opt/bin kubecfg -h http://" + kub_ip + ":8080 -json=true get pods/drupal" + str(x) + "|PATH=$PATH:/opt/bin jq '.currentState.podIP'|sed 's/\"//g'"]))
+	pods_ip_list.append(call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "/opt/bin/kubecfg -h http://" + kub_ip + ":8080 -json=true get pods/drupal" + str(x) + "|/opt/bin/jq '.currentState.podIP'|sed 's/\"//g'"]))
 
 	x += 1
 	z += 1
