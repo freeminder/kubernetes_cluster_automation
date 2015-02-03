@@ -31,6 +31,7 @@ os.remove("kubernetes-binaries.tar.gz")
 os.chdir(HOME)
 os.system("git clone https://github.com/unicell/coreos-k8s-demo")
 os.chdir("coreos-k8s-demo")
+# os.system("sed -i s/512mb/4gb/ create_droplet.sh")
 call(["sed", "-i", "s/603313/" + SSH_KEY_ID + "/", "create_droplet.sh"])
 os.system("PATH=$PATH:~/bin ./bootstrap.sh")
 
@@ -47,7 +48,7 @@ while x <= CLUSTER_SIZE:
 	call(["ssh-keygen", "-R", host_pub_ip])
 	# create local registry
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "mkdir -p ~/bin"])
-	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "~/bin/*", "core@" + host_pub_ip + ":~/bin/"])
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "wget https://github.com/freeminder/deis_cluster_automation/raw/master/kubernetes-binaries.tar.gz && tar zxf kubernetes-binaries.tar.gz && rm -f kubernetes-binaries.tar.gz"])
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "git clone https://github.com/freeminder/kubernetes_cluster_automation"])
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "~/bin/kubecfg -c kubernetes_cluster_automation/pods/myregistry.yaml create pods/"])
 	# build, tag and push drupal image
@@ -58,8 +59,7 @@ while x <= CLUSTER_SIZE:
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "sed -i s/drupal1/drupal" + str(x) + "/ kubernetes_cluster_automation/pods/drupal" + str(x) + ".yaml"])
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "~/bin/kubecfg -c kubernetes_cluster_automation/pods/drupal" + str(x) + ".yaml create pods/"])
 	# get pod's IP
-	# code to be written
-	# ...
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "~/bin/kubecfg -json=true get pods/drupal" + str(x)])
 	x += 1
 	z += 1
 
