@@ -39,6 +39,7 @@ os.system("PATH=$PATH:~/bin ./bootstrap.sh")
 
 x = 1
 z = 0 - CLUSTER_SIZE
+kub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][0]["ip_address"]
 while x <= CLUSTER_SIZE:
 	# get host's public IP
 	host_pub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][1]["ip_address"]
@@ -46,20 +47,11 @@ while x <= CLUSTER_SIZE:
 	host_int_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][0]["ip_address"]
 	# remove old ssh public key fingerprints
 	call(["ssh-keygen", "-R", host_pub_ip])
-	# create local registry
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "mkdir -p ~/bin"])
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "cd ~/bin && wget -q https://github.com/freeminder/deis_cluster_automation/raw/master/kubernetes-binaries.tar.gz && tar zxf kubernetes-binaries.tar.gz && rm -f kubernetes-binaries.tar.gz"])
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "git clone https://github.com/freeminder/kubernetes_cluster_automation"])
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "~/bin/kubecfg -c kubernetes_cluster_automation/pods/myregistry.yaml create pods/"])
-	# build, tag and push drupal image
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "git clone https://github.com/freeminder/drupal_allin2"])
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "docker build -t drupal drupal_allin2 && docker tag drupal localhost:5000/drupal && docker push localhost:5000/drupal"])
-	# create pods
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "mv kubernetes_cluster_automation/pods/drupal1.yaml kubernetes_cluster_automation/pods/drupal" + str(x) + ".yaml"])
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "sed -i s/drupal1/drupal" + str(x) + "/ kubernetes_cluster_automation/pods/drupal" + str(x) + ".yaml"])
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "~/bin/kubecfg -c kubernetes_cluster_automation/pods/drupal" + str(x) + ".yaml create pods/"])
-	# get pod's IP
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "~/bin/kubecfg -json=true get pods/drupal" + str(x)])
+	# create local registry; build, tag and push drupal image; create pods
+	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "host.sh", "core@" + host_pub_ip + ":~/"])
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash", HOME + "/host.sh", str(kub_ip), str(x)])
+	# # get pod's IP
+	# pod_ip_list = call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, HOME + "/bin/kubecfg -h http://" + kub_ip + ":8080 -json=true get pods/drupal" + str(x)])
 	x += 1
 	z += 1
 
