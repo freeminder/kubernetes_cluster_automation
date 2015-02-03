@@ -21,7 +21,7 @@ os.environ['DO_TOKEN'] = API_KEY
 os.environ['DISCOVERY_URL'] = urllib2.urlopen("https://discovery.etcd.io/new").read()
 
 # get kubernetes' binaries
-os.mkdir(HOME + "/bin", 0755)
+if not os.path.exists(HOME + "/bin"): os.mkdir(HOME + "/bin", 0755)
 os.chdir(HOME + "/bin")
 urllib.urlretrieve ("https://github.com/freeminder/deis_cluster_automation/raw/master/kubernetes-binaries.tar.gz", "kubernetes-binaries.tar.gz")
 os.system("tar zxf kubernetes-binaries.tar.gz")
@@ -52,9 +52,9 @@ while x <= CLUSTER_SIZE:
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "git clone https://github.com/freeminder/drupal_allin2"])
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "docker build -t drupal drupal_allin2 && docker tag drupal localhost:5000/drupal && docker push localhost:5000/drupal"])
 	# create pods
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "mv kubernetes_cluster_automation/pods/drupal1.yaml kubernetes_cluster_automation/pods/drupal" + x + ".yaml"])
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "sed -i s/drupal1/drupal" + x + "/ kubernetes_cluster_automation/pods/drupal" + x + ".yaml"])
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "kubecfg -c kubernetes_cluster_automation/pods/drupal" + x + ".yaml create pods/"])
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "mv kubernetes_cluster_automation/pods/drupal1.yaml kubernetes_cluster_automation/pods/drupal" + str(x) + ".yaml"])
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "sed -i s/drupal1/drupal" + str(x) + "/ kubernetes_cluster_automation/pods/drupal" + str(x) + ".yaml"])
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "kubecfg -c kubernetes_cluster_automation/pods/drupal" + str(x) + ".yaml create pods/"])
 	# get pod's IP
 	# code to be written
 	# ...
