@@ -48,7 +48,7 @@ while x <= CLUSTER_SIZE:
 	call(["ssh-keygen", "-R", host_pub_ip])
 	# create local registry
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "mkdir -p ~/bin"])
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "wget https://github.com/freeminder/deis_cluster_automation/raw/master/kubernetes-binaries.tar.gz && tar zxf kubernetes-binaries.tar.gz && rm -f kubernetes-binaries.tar.gz"])
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "cd ~/bin && wget -q https://github.com/freeminder/deis_cluster_automation/raw/master/kubernetes-binaries.tar.gz && tar zxf kubernetes-binaries.tar.gz && rm -f kubernetes-binaries.tar.gz"])
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "git clone https://github.com/freeminder/kubernetes_cluster_automation"])
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "~/bin/kubecfg -c kubernetes_cluster_automation/pods/myregistry.yaml create pods/"])
 	# build, tag and push drupal image
