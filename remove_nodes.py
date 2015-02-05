@@ -25,6 +25,6 @@ x = 1
 z = 0 - CLUSTER_SIZE
 while x <= CLUSTER_SIZE:
 	client.droplets.delete(client.droplets.list()[-1]["droplets"][z]["id"])
-	print("Node", x, "deleted.")
+	print("Node " + client.droplets.list()[-1]["droplets"][z]["name"] + " deleted.")
 	x += 1
 	z += 1
