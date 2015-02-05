@@ -19,6 +19,7 @@ client = dosa.Client(api_key=API_KEY)
 HOME = os.environ['HOME']
 os.environ['DO_TOKEN'] = API_KEY
 os.environ['DISCOVERY_URL'] = urllib2.urlopen("https://discovery.etcd.io/new").read()
+os.environ['NUM_OF_DROPLETS'] = CLUSTER_SIZE
 
 # get kubernetes' binaries
 if not os.path.exists(HOME + "/bin"): os.mkdir(HOME + "/bin", 0755)
@@ -31,7 +32,7 @@ os.remove("kubernetes-binaries.tar.gz")
 os.chdir(HOME)
 os.system("git clone https://github.com/unicell/coreos-k8s-demo")
 os.chdir("coreos-k8s-demo")
-# os.system("sed -i s/512mb/4gb/ create_droplet.sh")
+os.system("sed -i s/512mb/4gb/ create_droplet.sh")
 call(["sed", "-i", "s/603313/" + SSH_KEY_ID + "/", "create_droplet.sh"])
 os.system("PATH=$PATH:~/bin ./bootstrap.sh")
 
