@@ -19,7 +19,7 @@ client = dosa.Client(api_key=API_KEY)
 HOME = os.environ['HOME']
 os.environ['DO_TOKEN'] = API_KEY
 os.environ['DISCOVERY_URL'] = urllib2.urlopen("https://discovery.etcd.io/new").read()
-os.environ['NUM_OF_DROPLETS'] = CLUSTER_SIZE
+os.environ['NUM_OF_DROPLETS'] = str(CLUSTER_SIZE)
 
 # get kubernetes' binaries
 if not os.path.exists(HOME + "/bin"): os.mkdir(HOME + "/bin", 0755)
