@@ -23,8 +23,10 @@ os.environ['NUM_OF_DROPLETS'] = str(CLUSTER_SIZE)
 
 x = 1
 z = 0 - CLUSTER_SIZE
+word = "tcore"
 while x <= CLUSTER_SIZE:
-	client.droplets.delete(client.droplets.list()[-1]["droplets"][z]["id"])
-	print("Node " + client.droplets.list()[-1]["droplets"][z]["name"] + " deleted.")
+	if word in client.droplets.list()[-1]["droplets"][z]["name"]:
+		client.droplets.delete(client.droplets.list()[-1]["droplets"][z]["id"])
+		print("Node " + client.droplets.list()[-1]["droplets"][z]["name"] + " deleted.")
 	x += 1
 	z += 1
