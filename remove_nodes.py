@@ -20,12 +20,13 @@ HOME = os.environ['HOME']
 os.environ['DO_TOKEN'] = API_KEY
 os.environ['DISCOVERY_URL'] = urllib2.urlopen("https://discovery.etcd.io/new").read()
 os.environ['NUM_OF_DROPLETS'] = str(CLUSTER_SIZE)
+droplet_name = "tcore"
+
 
 x = 1
 z = 0 - CLUSTER_SIZE
-word = "tcore"
 while x <= CLUSTER_SIZE:
-	if word in client.droplets.list()[-1]["droplets"][z]["name"]:
+	if droplet_name in client.droplets.list()[-1]["droplets"][z]["name"]:
 		client.droplets.delete(client.droplets.list()[-1]["droplets"][z]["id"])
 		print("Node " + client.droplets.list()[-1]["droplets"][z]["name"] + " deleted.")
 	x += 1

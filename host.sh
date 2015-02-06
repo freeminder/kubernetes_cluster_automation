@@ -3,10 +3,7 @@ KUB_IP=$1
 DRUPAL_ID=$2
 
 # create local registry; build, tag and push drupal image
-mkdir -p ~/bin && cd ~/bin && export PATH=$PATH:~/bin && \
-wget -q https://github.com/freeminder/deis_cluster_automation/raw/master/kubernetes-binaries.tar.gz && \
-tar zxf kubernetes-binaries.tar.gz && rm -f kubernetes-binaries.tar.gz && sudo mkdir -p /opt/bin && sudo cp * /opt/bin/ && \
-cd && git clone https://github.com/freeminder/kubernetes_cluster_automation && \
+git clone https://github.com/freeminder/kubernetes_cluster_automation && \
 kubernetes_cluster_automation/kubecfg -h http://$KUB_IP:8080 -c kubernetes_cluster_automation/pods/myregistry.yaml create pods/ && \
 git clone https://github.com/freeminder/drupal_allin2 && \
 docker build -t drupal drupal_allin2 && docker tag drupal localhost:5000/drupal && docker push localhost:5000/drupal

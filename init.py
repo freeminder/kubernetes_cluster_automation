@@ -34,6 +34,10 @@ os.system("git clone https://github.com/unicell/coreos-k8s-demo")
 os.chdir("coreos-k8s-demo")
 os.system("sed -i s/512mb/4gb/ create_droplet.sh")
 call(["sed", "-i", "s/603313/" + SSH_KEY_ID + "/", "create_droplet.sh"])
+# copy kubernetes binaries
+if not os.path.exists("bin"): os.mkdir("bin", 0755)
+os.system("cp ../bin/* bin/")
+# bootstrap cluster
 os.system("PATH=$PATH:~/bin ./bootstrap.sh")
 
 
