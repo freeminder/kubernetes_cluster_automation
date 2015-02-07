@@ -32,6 +32,7 @@ os.remove("kubernetes-binaries.tar.gz")
 os.chdir(HOME)
 os.system("git clone https://github.com/unicell/coreos-k8s-demo")
 os.chdir("coreos-k8s-demo")
+# patch original sources
 os.system("sed -i s/512mb/4gb/ create_droplet.sh")
 call(["sed", "-i", "s/603313/" + SSH_KEY_ID + "/", "create_droplet.sh"])
 # copy kubernetes binaries
