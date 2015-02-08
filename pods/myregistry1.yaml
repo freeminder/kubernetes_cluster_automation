@@ -1,13 +1,13 @@
 kind: Pod
-id: docker-registry
+id: docker-registry1
 apiVersion: v1beta1
 namespace: default
 labels:
-  name: docker-registry
+  name: docker-registry1
 desiredState:
   manifest:
     version: v1beta1
-    id: docker-registry
+    id: docker-registry1
     volumes: []
     containers:
     - name: master
