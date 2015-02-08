@@ -42,6 +42,7 @@ os.chdir("coreos-k8s-demo")
 # patch original sources
 os.system("sed -i s/512mb/4gb/ create_droplet.sh")
 call(["sed", "-i", "s/603313/" + SSH_KEY_ID + "/", "create_droplet.sh"])
+os.system("sed -i 's/i;/i \&\& sleep 15;/' bootstrap.sh")
 # copy kubernetes binaries
 if not os.path.exists("bin"): os.mkdir("bin", 0755)
 os.system("cp ../bin/* bin/")
