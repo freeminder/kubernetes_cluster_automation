@@ -28,6 +28,13 @@ urllib.urlretrieve ("https://github.com/freeminder/deis_cluster_automation/raw/m
 os.system("tar zxf kubernetes-binaries.tar.gz")
 os.remove("kubernetes-binaries.tar.gz")
 
+# create dirs and files
+if not os.path.exists(HOME + "/.fleetctl"):
+	os.mkdir(HOME + "/.fleetctl", 0755)
+	open(HOME + '/.fleetctl/known_hosts', 'a').close()
+if not os.path.exists(HOME + "/.ssh"):
+	os.mkdir(HOME + "/.ssh", 0755)
+	open(HOME + '/.ssh/known_hosts', 'a').close()
 # create cluster
 os.chdir(HOME)
 os.system("git clone https://github.com/unicell/coreos-k8s-demo")
