@@ -53,6 +53,7 @@ os.system("PATH=$PATH:~/bin ./bootstrap.sh")
 x = 1
 z = 0 - CLUSTER_SIZE
 kub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][0]["ip_address"]
+drupal_ip_list = list()
 while x <= CLUSTER_SIZE:
 	# get host's public IP
 	host_pub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][1]["ip_address"]
@@ -60,13 +61,12 @@ while x <= CLUSTER_SIZE:
 	host_int_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][0]["ip_address"]
 	# remove old ssh public key fingerprints
 	call(["ssh-keygen", "-R", host_pub_ip])
-	# create local registry; build, tag and push drupal image; create pods
+	# copy and run script, which will create local registry; build, tag and push drupal image; create pods
 	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/host.sh", "core@" + host_pub_ip + ":~/"])
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash host.sh", str(kub_ip), str(x)])
-	# get pod's IP
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash host.sh", str(kub_ip), str(x), str(drupal_ip_list[0])])
+	# get drupal's pod IP
 	out = check_output(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "/opt/bin/kubecfg -h http://" + kub_ip + ":8080 -json=true get pods/drupal" + str(x) + "|/opt/bin/jq '.currentState.podIP'|sed 's/\"//g'"])
-	pods_ip_list = list()
-	pods_ip_list.append(out.strip())
+	drupal_ip_list.append(out.strip())
 
 	x += 1
 	z += 1
