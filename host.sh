@@ -3,7 +3,7 @@ KUB_IP=$1
 DRUPAL_ID=$2
 
 
-if $DRUPAL_ID == "1"
+if "$DRUPAL_ID" == "1"
 then
 	# create local registry; build, tag and push drupal image
 	git clone https://github.com/freeminder/kubernetes_cluster_automation && \
