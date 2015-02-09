@@ -23,28 +23,38 @@ os.environ['DISCOVERY_URL'] = urllib2.urlopen("https://discovery.etcd.io/new").r
 os.environ['NUM_OF_DROPLETS'] = str(CLUSTER_SIZE)
 
 
+# copy and run deployment script of local docker registry on each node
 x = 1
-z = 0 - CLUSTER_SIZE
-kub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][0]["ip_address"]
-drupal_ip_list = list()
 while x <= CLUSTER_SIZE:
 	# get host's public IP
 	host_pub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][1]["ip_address"]
-	# get host's private IP
-	host_int_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][0]["ip_address"]
 	# remove old ssh public key fingerprints
 	call(["ssh-keygen", "-R", host_pub_ip])
-	# copy and run script, which will create local registry; build, tag and push drupal image; create pods
-	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/host.sh", "core@" + host_pub_ip + ":~/"])
+
+	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/docker_registry.sh", "core@" + host_pub_ip + ":~/"])
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash docker_registry.sh", str(kub_ip), str(x)])
+
+	x += 1
+
+
+kub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][0]["ip_address"]
+drupal_ip_list = list()
+z = 0 - CLUSTER_SIZE
+x = 1
+while x <= CLUSTER_SIZE:
+	# get host's public IP
+	host_pub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][1]["ip_address"]
+	# copy and run script, which will build, tag and push drupal image and also create pods
+	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/docker_drupal.sh", "core@" + host_pub_ip + ":~/"])
 	if len(drupal_ip_list) == 0:
-		call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash host.sh", str(kub_ip), str(x)])
+		call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash docker_drupal.sh", str(kub_ip), str(x)])
 		# get drupal's pod IP
 		drupal_ip_list.append("")
 		while not re.match('10', str(drupal_ip_list[0])):
-			out = check_output(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "/opt/bin/kubecfg -h http://" + kub_ip + ":8080 -json=true get pods/drupal1 | /opt/bin/jq '.currentState.podIP'|sed 's/\"//g'"])
+			out = check_output(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "/opt/bin/kubecfg -json=true get pods/drupal1 | /opt/bin/jq '.currentState.podIP'|sed 's/\"//g'"])
 			drupal_ip_list[0] = out.strip()
 	else:
-		call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash host.sh", str(kub_ip), str(x), str(drupal_ip_list[0])])
+		call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash docker_drupal.sh", str(kub_ip), str(x), str(drupal_ip_list[0])])
 		# get drupal's pod IP
 		drupal_ip_list.append("")
 		while not re.match('10', str(drupal_ip_list[x-1])):
@@ -54,3 +64,4 @@ while x <= CLUSTER_SIZE:
 	x += 1
 	z += 1
 
+print(drupal_ip_list)

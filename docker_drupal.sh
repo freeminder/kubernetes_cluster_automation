@@ -5,11 +5,7 @@ MYSQL_MASTER=$3
 
 if [ $HOST_ID == 1 ]
 then
-	# create local registry; build, tag and push drupal image
-	cd ~
-	rm -fr kubernetes_cluster_automation
-	git clone https://github.com/freeminder/kubernetes_cluster_automation
-	kubernetes_cluster_automation/kubecfg -h http://$KUB_IP:8080 -c kubernetes_cluster_automation/pods/myregistry1.yaml create pods/ && \
+	# build, tag and push drupal image
 	cd ~
 	rm -fr drupal_allin
 	sleep 20 && git clone https://github.com/freeminder/drupal_allin
@@ -21,13 +17,6 @@ then
 	DRUPAL_ID=`docker ps|grep drupal:latest|awk '{print $1}'`
 	sudo docker exec -i -t $DRUPAL_ID cp -f /var/www/sites/default/settings.php /var/www/sites/default/settings.orig
 else
-	# create local registry
-	cd ~
-	rm -fr kubernetes_cluster_automation
-	git clone https://github.com/freeminder/kubernetes_cluster_automation
-	mv kubernetes_cluster_automation/pods/myregistry1.yaml kubernetes_cluster_automation/pods/myregistry$HOST_ID.yaml && \
-	sed -i s/docker-registry1/docker-registry${HOST_ID}/ kubernetes_cluster_automation/pods/myregistry$HOST_ID.yaml && \
-	kubernetes_cluster_automation/kubecfg -h http://$KUB_IP:8080 -c kubernetes_cluster_automation/pods/myregistry$HOST_ID.yaml create pods/ && \
 	# replace IP of mysql master in drupal image; build, tag and push drupal image
 	cd ~
 	rm -fr drupal_allin
