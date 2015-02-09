@@ -13,7 +13,7 @@ then
 	cd ~
 	rm -fr drupal_allin
 	sleep 20 && git clone https://github.com/freeminder/drupal_allin
-	docker build -t drupal drupal_allin && docker tag drupal localhost:5000/drupal && docker push localhost:5000/drupal
+	docker build -t drupal drupal_allin && sleep 20 && docker tag drupal localhost:5000/drupal && docker push localhost:5000/drupal
 	# create drupal pod
 	kubernetes_cluster_automation/kubecfg -h http://$KUB_IP:8080 -c kubernetes_cluster_automation/pods/drupal$HOST_ID.yaml create pods/
 	# patch drupal settings
