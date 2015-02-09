@@ -41,7 +41,7 @@ while x <= CLUSTER_SIZE:
 		# get drupal's pod IP
 		drupal_ip_list.append("")
 		while not re.match('10', str(drupal_ip_list[0])):
-			out = check_output(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "/opt/bin/kubecfg -h http://" + kub_ip + ":8080 -json=true get pods/drupal" + str(x) + "|/opt/bin/jq '.currentState.podIP'|sed 's/\"//g'"])
+			out = check_output(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "/opt/bin/kubecfg -h http://" + kub_ip + ":8080 -json=true get pods/drupal1 | /opt/bin/jq '.currentState.podIP'|sed 's/\"//g'"])
 			drupal_ip_list[0] = out.strip()
 	else:
 		call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash host.sh", str(kub_ip), str(x), str(drupal_ip_list[0])])
