@@ -9,7 +9,3 @@ desiredState:
     containers:
       - name: drupal1
         image: localhost:5000/drupal
-        ports:
-          - Name: webport
-            containerPort: 80
-            hostPort: 80
