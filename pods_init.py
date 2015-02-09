@@ -23,6 +23,10 @@ os.environ['DISCOVERY_URL'] = urllib2.urlopen("https://discovery.etcd.io/new").r
 os.environ['NUM_OF_DROPLETS'] = str(CLUSTER_SIZE)
 
 
+kub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][0]["ip_address"]
+drupal_ip_list = list()
+
+
 # copy and run deployment script of local docker registry on each node
 x = 1
 while x <= CLUSTER_SIZE:
@@ -37,14 +41,12 @@ while x <= CLUSTER_SIZE:
 	x += 1
 
 
-kub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][0]["ip_address"]
-drupal_ip_list = list()
+# copy and run script, which will build, tag and push drupal image and also create pods
 z = 0 - CLUSTER_SIZE
 x = 1
 while x <= CLUSTER_SIZE:
 	# get host's public IP
 	host_pub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][1]["ip_address"]
-	# copy and run script, which will build, tag and push drupal image and also create pods
 	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/docker_drupal.sh", "core@" + host_pub_ip + ":~/"])
 	if len(drupal_ip_list) == 0:
 		call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash docker_drupal.sh", str(kub_ip), str(x)])
