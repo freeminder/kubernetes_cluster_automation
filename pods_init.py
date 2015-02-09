@@ -25,6 +25,7 @@ os.environ['NUM_OF_DROPLETS'] = str(CLUSTER_SIZE)
 
 kub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][0]["ip_address"]
 drupal_ip_list = list()
+z = 0 - CLUSTER_SIZE
 
 
 # copy and run deployment script of local docker registry on each node
@@ -42,7 +43,6 @@ while x <= CLUSTER_SIZE:
 
 
 # copy and run script, which will build, tag and push drupal image and also create pods
-z = 0 - CLUSTER_SIZE
 x = 1
 while x <= CLUSTER_SIZE:
 	# get host's public IP
