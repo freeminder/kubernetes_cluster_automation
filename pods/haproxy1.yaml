@@ -8,7 +8,7 @@ desiredState:
     version: v1beta1
     containers:
       - name: haproxy1
-        image: localhost:5000/drupal
+        image: localhost:5000/haproxy
         ports:
           - Name: webport
             containerPort: 80
