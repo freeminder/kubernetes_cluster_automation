@@ -12,4 +12,6 @@ while [[ $DRUPAL_IMAGES != 0 ]]; do
 	sudo docker ps -a | grep Exit | awk '{print $1}' | sudo xargs docker rm -f
 	docker rmi -f drupal
 	docker rmi -f localhost:5000/drupal
+	DRUPAL_IMAGES=`docker images|grep drupal|wc -l`
+	DRUPAL_PS=`docker ps|grep drupal:latest|wc -l`
 done
