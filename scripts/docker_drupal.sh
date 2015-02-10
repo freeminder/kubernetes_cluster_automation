@@ -10,7 +10,7 @@ then
 	cd ~
 	rm -fr drupal_allin
 	git clone https://github.com/freeminder/drupal_allin
-	docker build -t drupal drupal_allin && sleep 20 && docker tag drupal localhost:5000/drupal && docker push localhost:5000/drupal
+	docker build -t drupal drupal_allin && docker tag drupal localhost:5000/drupal && docker push localhost:5000/drupal
 	# create drupal pod
 	kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 -c kubernetes_cluster_automation/pods/drupal$HOST_ID.yaml create pods/
 	# wait until pod is ready
@@ -19,13 +19,6 @@ then
 		echo "Waiting for drupal container creation..."
 		DRUPAL_STATUS=`kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 list pods|grep drupal$HOST_ID|awk '{print $4}'`
 	done
-	# patch drupal settings
-	DRUPAL_ID=`docker ps|grep drupal:latest|awk '{print $1}'`
-	DRUPAL_NUM=`docker ps|grep drupal$HOST_ID`
-	if [[ $DRUPAL_NUM != "" ]]
-	then
-		sudo docker exec -i -t $DRUPAL_ID cp -f /var/www/sites/default/settings.php /var/www/sites/default/settings.orig
-	fi
 else
 	# replace IP of mysql master in drupal image; build, tag and push drupal image
 	cd ~
@@ -48,11 +41,12 @@ else
 		echo "Waiting for drupal container creation..."
 		DRUPAL_STATUS=`kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 list pods|grep drupal$HOST_ID|awk '{print $4}'`
 	done
-	# patch drupal settings
-	DRUPAL_ID=`docker ps|grep drupal:latest|awk '{print $1}'`
-	DRUPAL_NUM=`docker ps|grep drupal$HOST_ID`
-	if [[ $DRUPAL_NUM != "" ]]
-	then
-		sudo docker exec -i -t $DRUPAL_ID cp -f /var/www/sites/default/settings.php /var/www/sites/default/settings.orig
-	fi
+fi
+
+# find master drupal pod and backup settings
+DRUPAL_MASTER_CHECK=`docker ps|grep drupal1`
+DRUPAL_ID=`docker ps|grep drupal:latest|awk '{print $1}'`
+if [[ $DRUPAL_MASTER_CHECK != "" ]]
+then
+	sudo docker exec -i -t $DRUPAL_ID cp -f /var/www/sites/default/settings.php /var/www/sites/default/settings.orig
 fi

@@ -59,6 +59,19 @@ while x <= CLUSTER_SIZE:
 	x += 1
 	z += 1
 
+# patch drupal settings
+z = 0 - CLUSTER_SIZE
+x = 1
+while x <= CLUSTER_SIZE:
+	# get host's public IP
+	host_pub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][1]["ip_address"]
+
+	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/scripts/patch_drupal_settings.sh", "core@" + host_pub_ip + ":~/"])
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash patch_drupal_settings.sh"])
+
+	x += 1
+	z += 1
+
 
 # copy and run deployment script of haproxy load balancer on each node
 z = 0 - CLUSTER_SIZE
