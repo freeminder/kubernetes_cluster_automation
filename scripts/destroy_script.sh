@@ -1,10 +1,14 @@
 #!/bin/bash
 KUB_IP=$1
-HOST_ID=$2
+CLUSTER_SIZE=$2
+x=1
 
-~/kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 delete pods/drupal$HOST_ID
-~/kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 delete pods/docker-registry$HOST_ID
-~/kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 delete pods/haproxy$HOST_ID
+while [[ $x -le $CLUSTER_SIZE ]]; do
+	~/kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 delete pods/drupal$x
+	~/kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 delete pods/docker-registry$x
+	~/kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 delete pods/haproxy$x
+	x=$((x+1))
+done
 
 DRUPAL_IMAGES=`docker images|grep drupal|wc -l`
 DRUPAL_PS=`docker ps|grep drupal:latest|wc -l`
