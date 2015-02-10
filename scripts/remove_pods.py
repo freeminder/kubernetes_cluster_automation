@@ -11,7 +11,7 @@ import os
 import sys
 import time
 import re
-from myconfig import *
+from ../myconfig import *
 
 
 # set variables

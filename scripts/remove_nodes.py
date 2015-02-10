@@ -10,7 +10,7 @@ import shutil
 import os
 import sys
 import time
-from myconfig import *
+from ../myconfig import *
 
 
 # set variables
