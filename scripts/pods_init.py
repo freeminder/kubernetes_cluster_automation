@@ -1,17 +1,9 @@
 #!/usr/bin/env python
 import dosa
 from subprocess import call, check_output
-import random
-import string
-import urllib
-import urllib2
-import fileinput
-import shutil
-import os
-import sys
-import time
-import re
-from ../myconfig import *
+import random, string, urllib, urllib2, fileinput, shutil, os, sys, time, re
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+from myconfig import *
 
 
 # set variables
