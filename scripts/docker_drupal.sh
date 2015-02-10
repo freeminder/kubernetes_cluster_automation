@@ -18,6 +18,7 @@ then
 	while [[ $DRUPAL_STATUS != "Running" ]]; do
 		sleep 5
 		echo "Waiting for drupal container creation..."
+		DRUPAL_STATUS=`kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 list pods|grep drupal$HOST_ID|awk '{print $4}'`
 	done
 	sudo docker exec -i -t $DRUPAL_ID cp -f /var/www/sites/default/settings.php /var/www/sites/default/settings.orig
 else
@@ -40,6 +41,7 @@ else
 	while [[ $DRUPAL_STATUS != "Running" ]]; do
 		sleep 5
 		echo "Waiting for drupal container creation..."
+		DRUPAL_STATUS=`kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 list pods|grep drupal$HOST_ID|awk '{print $4}'`
 	done
 	sudo docker exec -i -t $DRUPAL_ID cp -f /var/www/sites/default/settings.orig /var/www/sites/default/settings.php
 fi
