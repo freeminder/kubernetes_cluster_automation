@@ -43,5 +43,3 @@ while x <= CLUSTER_SIZE:
 
 	x += 1
 	z += 1
-
-print(drupal_ip_list)

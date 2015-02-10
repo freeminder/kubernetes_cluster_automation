@@ -17,6 +17,7 @@ then
 	# patch drupal settings
 	while [[ $DRUPAL_STATUS != "Running" ]]; do
 		sleep 5
+		echo "Waiting for drupal container creation..."
 	done
 	sudo docker exec -i -t $DRUPAL_ID cp -f /var/www/sites/default/settings.php /var/www/sites/default/settings.orig
 else
@@ -38,6 +39,7 @@ else
 	# patch drupal settings
 	while [[ $DRUPAL_STATUS != "Running" ]]; do
 		sleep 5
+		echo "Waiting for drupal container creation..."
 	done
 	sudo docker exec -i -t $DRUPAL_ID cp -f /var/www/sites/default/settings.orig /var/www/sites/default/settings.php
 fi
