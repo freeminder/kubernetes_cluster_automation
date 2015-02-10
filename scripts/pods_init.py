@@ -13,7 +13,7 @@ os.environ['DO_TOKEN'] = API_KEY
 os.environ['DISCOVERY_URL'] = urllib2.urlopen("https://discovery.etcd.io/new").read()
 os.environ['NUM_OF_DROPLETS'] = str(CLUSTER_SIZE)
 
-
+z = 0 - CLUSTER_SIZE
 kub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][0]["ip_address"]
 drupal_ip_list = list()
 
