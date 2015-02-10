@@ -82,4 +82,3 @@ while x <= CLUSTER_SIZE:
 
 
 print(drupal_ip_list)
-

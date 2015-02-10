@@ -20,11 +20,12 @@ for i in `seq $NUM_OF_DROPLETS`; do
         sleep 15
         DROPLET_DETAILS=`./get_droplet.sh | jq '.droplets[] | select(.name == '\""$NAME_PREFIX$i"\"')'`
         DROPLET_STATUS=`echo $DROPLET_DETAILS | jq '.status' | sed 's/"//g'`
-        if [ CYCLE >= 10 ]
+        if [ $CYCLE == 10 ]
         then
-            python2 ~/kubernetes_cluster_automation/remove_nodes.py
+            python2 ~/kubernetes_cluster_automation/scripts/remove_nodes.py
+            break
         fi
-        CYCLE += 1
+        CYCLE=$((CYCLE+1))
     done
     PUBLIC_IP=`echo $DROPLET_DETAILS | jq '.networks.v4 | .[] | select(.type =="public") | .ip_address' | sed 's/"//g'`
     echo $PUBLIC_IP >>allhosts;
