@@ -2,6 +2,8 @@
 KUB_IP=$1
 HOST_ID=$2
 MYSQL_MASTER=$3
+DRUPAL_ID=`docker ps|grep drupal:latest|awk '{print $1}'`
+DRUPAL_STATUS=`kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 list pods|grep drupal$HOST_ID|awk '{print $4}'`
 
 if [ $HOST_ID == 1 ]
 then
@@ -13,8 +15,9 @@ then
 	# create drupal pod
 	kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 -c kubernetes_cluster_automation/pods/drupal$HOST_ID.yaml create pods/
 	# patch drupal settings
-	sleep 20
-	DRUPAL_ID=`docker ps|grep drupal:latest|awk '{print $1}'`
+	while [[ $DRUPAL_STATUS != "Running" ]]; do
+		sleep 5
+	done
 	sudo docker exec -i -t $DRUPAL_ID cp -f /var/www/sites/default/settings.php /var/www/sites/default/settings.orig
 else
 	# replace IP of mysql master in drupal image; build, tag and push drupal image
@@ -33,7 +36,8 @@ else
 	sed -i s/drupal1/drupal${HOST_ID}/ kubernetes_cluster_automation/pods/drupal$HOST_ID.yaml
 	kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 -c kubernetes_cluster_automation/pods/drupal$HOST_ID.yaml create pods/
 	# patch drupal settings
-	sleep 120
-	DRUPAL_ID=`docker ps|grep drupal:latest|awk '{print $1}'`
+	while [[ $DRUPAL_STATUS != "Running" ]]; do
+		sleep 5
+	done
 	sudo docker exec -i -t $DRUPAL_ID cp -f /var/www/sites/default/settings.orig /var/www/sites/default/settings.php
 fi
