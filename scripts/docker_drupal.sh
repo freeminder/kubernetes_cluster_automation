@@ -11,7 +11,7 @@ then
 	git clone https://github.com/freeminder/drupal_allin
 	docker build -t drupal drupal_allin && sleep 20 && docker tag drupal localhost:5000/drupal && docker push localhost:5000/drupal
 	# create drupal pod
-	kubernetes_cluster_automation/kubecfg -h http://$KUB_IP:8080 -c kubernetes_cluster_automation/pods/drupal$HOST_ID.yaml create pods/
+	kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 -c kubernetes_cluster_automation/pods/drupal$HOST_ID.yaml create pods/
 	# patch drupal settings
 	sleep 20
 	DRUPAL_ID=`docker ps|grep drupal:latest|awk '{print $1}'`
@@ -31,7 +31,7 @@ else
 	mv kubernetes_cluster_automation/pods/drupal1.yaml kubernetes_cluster_automation/pods/drupal$HOST_ID.yaml
 	pwd
 	sed -i s/drupal1/drupal${HOST_ID}/ kubernetes_cluster_automation/pods/drupal$HOST_ID.yaml
-	kubernetes_cluster_automation/kubecfg -h http://$KUB_IP:8080 -c kubernetes_cluster_automation/pods/drupal$HOST_ID.yaml create pods/
+	kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 -c kubernetes_cluster_automation/pods/drupal$HOST_ID.yaml create pods/
 	# patch drupal settings
 	sleep 120
 	DRUPAL_ID=`docker ps|grep drupal:latest|awk '{print $1}'`

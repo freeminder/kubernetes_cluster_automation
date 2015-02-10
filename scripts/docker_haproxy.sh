@@ -20,4 +20,4 @@ cd ~
 mv kubernetes_cluster_automation/pods/haproxy1.yaml kubernetes_cluster_automation/pods/haproxy$HOST_ID.yaml
 pwd
 sed -i s/haproxy1/haproxy${HOST_ID}/ kubernetes_cluster_automation/pods/haproxy$HOST_ID.yaml
-kubernetes_cluster_automation/kubecfg -h http://$KUB_IP:8080 -c kubernetes_cluster_automation/pods/haproxy$HOST_ID.yaml create pods/
+kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 -c kubernetes_cluster_automation/pods/haproxy$HOST_ID.yaml create pods/
