@@ -36,10 +36,11 @@ while x <= CLUSTER_SIZE:
 	# remove old ssh public key fingerprints
 	call(["ssh-keygen", "-R", host_pub_ip])
 
-	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/docker_registry.sh", "core@" + host_pub_ip + ":~/"])
+	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/scripts/docker_registry.sh", "core@" + host_pub_ip + ":~/"])
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash docker_registry.sh", str(kub_ip), str(x)])
 
 	x += 1
+	z += 1
 
 
 # copy and run script, which will build, tag and push drupal image and also create pods
@@ -47,7 +48,7 @@ x = 1
 while x <= CLUSTER_SIZE:
 	# get host's public IP
 	host_pub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][1]["ip_address"]
-	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/docker_drupal.sh", "core@" + host_pub_ip + ":~/"])
+	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/scripts/docker_drupal.sh", "core@" + host_pub_ip + ":~/"])
 	if len(drupal_ip_list) == 0:
 		call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash docker_drupal.sh", str(kub_ip), str(x)])
 		# get drupal's pod IP
@@ -73,10 +74,11 @@ while x <= CLUSTER_SIZE:
 	# get host's public IP
 	host_pub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][1]["ip_address"]
 
-	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/docker_haproxy.sh", "core@" + host_pub_ip + ":~/"])
+	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/scripts/docker_haproxy.sh", "core@" + host_pub_ip + ":~/"])
 	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash docker_haproxy.sh", str(kub_ip), str(x), str(drupal_ip_list)])
 
 	x += 1
+	z += 1
 
 
 print(drupal_ip_list)

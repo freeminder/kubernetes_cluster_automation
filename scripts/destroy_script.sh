@@ -2,8 +2,8 @@
 KUB_IP=$1
 HOST_ID=$2
 
-~/kubernetes_cluster_automation/kubecfg -h http://$KUB_IP:8080 delete pods/drupal$HOST_ID
-~/kubernetes_cluster_automation/kubecfg -h http://$KUB_IP:8080 delete pods/docker-registry$HOST_ID
+~/kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 delete pods/drupal$HOST_ID
+~/kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 delete pods/docker-registry$HOST_ID
 
 DOCKER_PS=`docker ps|grep drupal|wc -l`
 while [ "DOCKER_PS" != "0"]; do

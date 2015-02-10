@@ -49,7 +49,7 @@ os.system("cp -f ../kubernetes_cluster_automation/bootstrap.sh .")
 if not os.path.exists("bin"): os.mkdir("bin", 0755)
 os.system("cp ../bin/* bin/")
 # bootstrap cluster
-os.system("PATH=$PATH:~/bin ./bootstrap.sh")
+os.system("PATH=$PATH:~/bin scripts/bootstrap.sh")
 
 
 
