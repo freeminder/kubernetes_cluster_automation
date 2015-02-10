@@ -39,7 +39,7 @@ while x <= CLUSTER_SIZE:
 	# get host's public IP
 	host_pub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][1]["ip_address"]
 	call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/scripts/destroy_script.sh", "core@" + host_pub_ip + ":~/"])
-	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash destroy_script.sh", str(kub_ip), str(x)])
+	call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash destroy_script.sh", str(kub_ip), str(CLUSTER_SIZE)])
 
 	x += 1
 	z += 1
