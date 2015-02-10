@@ -4,7 +4,7 @@ from subprocess import call, check_output
 import random, string, urllib, urllib2, fileinput, shutil, os, sys, time, re
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 from myconfig import *
-
+print(CLUSTER_SIZE)
 
 # set variables
 # dosa.set_debug()  # enables debug logs
@@ -15,12 +15,12 @@ os.environ['DISCOVERY_URL'] = urllib2.urlopen("https://discovery.etcd.io/new").r
 os.environ['NUM_OF_DROPLETS'] = str(CLUSTER_SIZE)
 
 
-z = 0 - CLUSTER_SIZE
 kub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][0]["ip_address"]
 drupal_ip_list = list()
 
 
 # copy and run deployment script of local docker registry on each node
+z = 0 - CLUSTER_SIZE
 x = 1
 while x <= CLUSTER_SIZE:
 	# get host's public IP
@@ -36,6 +36,7 @@ while x <= CLUSTER_SIZE:
 
 
 # copy and run script, which will build, tag and push drupal image and also create pods
+z = 0 - CLUSTER_SIZE
 x = 1
 while x <= CLUSTER_SIZE:
 	# get host's public IP
@@ -61,6 +62,7 @@ while x <= CLUSTER_SIZE:
 
 
 # copy and run deployment script of haproxy load balancer on each node
+z = 0 - CLUSTER_SIZE
 x = 1
 while x <= CLUSTER_SIZE:
 	# get host's public IP
