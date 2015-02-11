@@ -20,3 +20,6 @@ while [[ $DRUPAL_IMAGES != 0 ]]; do
 	DRUPAL_IMAGES=`docker images|grep drupal|wc -l`
 	DRUPAL_PS=`docker ps|grep drupal:latest|awk '{print $1}'`
 done
+
+# remove base drupal image
+docker images|grep GB|awk '{print $3}'|xargs docker rmi -f

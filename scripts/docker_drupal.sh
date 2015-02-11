@@ -42,12 +42,3 @@ else
 		DRUPAL_STATUS=`kubernetes_cluster_automation/bin/kubecfg -h http://$KUB_IP:8080 list pods|grep drupal$HOST_ID|awk '{print $4}'`
 	done
 fi
-
-# find master drupal pod and backup settings
-DRUPAL_MASTER_CHECK=`docker ps|grep drupal1`
-DRUPAL_ID=`docker ps|grep drupal:latest|awk '{print $1}'`
-if [[ $DRUPAL_MASTER_CHECK != "" ]]
-then
-	sleep 20
-	sudo docker exec -i -t $DRUPAL_ID cp -f /var/www/sites/default/settings.php /var/www/sites/default/settings.orig
-fi

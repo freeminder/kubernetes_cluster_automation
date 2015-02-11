@@ -48,7 +48,18 @@ while x <= CLUSTER_SIZE:
 		while not re.match('10', str(drupal_ip_list[0])):
 			out = check_output(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "/opt/bin/kubecfg -json=true get pods/drupal1 | /opt/bin/jq '.currentState.podIP'|sed 's/\"//g'"])
 			drupal_ip_list[0] = out.strip()
+		# find drupal master and backup settings
+		dmx = 1
+		dmz = 0 - CLUSTER_SIZE
+		while dmx <= CLUSTER_SIZE:
+			host_pub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][1]["ip_address"]
+			call(["/usr/bin/scp", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", HOME + "/kubernetes_cluster_automation/scripts/backup_drupal_settings.sh", "core@" + host_pub_ip + ":~/"])
+			call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash backup_drupal_settings.sh"])
+			dmx += 1
+			dmz += 1
 	else:
+		# get host's public IP
+		host_pub_ip = client.droplets.list()[-1]["droplets"][z]["networks"]["v4"][1]["ip_address"]
 		call(["/usr/bin/ssh", "-o StrictHostKeyChecking=no", "-o PasswordAuthentication=no", "core@" + host_pub_ip, "bash docker_drupal.sh", str(kub_ip), str(x), str(drupal_ip_list[0])])
 		# get drupal's pod IP
 		drupal_ip_list.append("")
